@@ -228,7 +228,7 @@ QWindow *UnlockApp::getActiveScreen()
     }
 
     for (PlasmaQuick::QuickViewSharedEngine *view : std::as_const(m_views)) {
-        if (view->geometry().contains(QCursor::pos())) {
+        if (view->screen() == QGuiApplication::primaryScreen()) {
             activeScreen = view;
             break;
         }
@@ -296,6 +296,10 @@ void UnlockApp::initialViewSetup()
                                                   "Authenticators",
                                                   QStringLiteral("authenticators must be obtained from the context"));
     for (QScreen *screen : screens()) {
+        if (screen != QGuiApplication::primaryScreen()) {
+            continue;
+        }
+
         handleScreen(screen);
     }
     connect(this, &UnlockApp::screenAdded, this, &UnlockApp::handleScreen);
