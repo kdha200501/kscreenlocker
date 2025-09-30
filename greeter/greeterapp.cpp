@@ -223,7 +223,7 @@ QWindow *UnlockApp::getActiveScreen()
     }
 
     for (QQuickView *view : std::as_const(m_views)) {
-        if (view->geometry().contains(QCursor::pos())) {
+        if (view->screen() == QGuiApplication::primaryScreen()) {
             activeScreen = view;
             break;
         }
@@ -268,6 +268,10 @@ QQuickItem *UnlockApp::loadWallpaperPlugin(QObject *parent, int width, int heigh
 void UnlockApp::initialViewSetup()
 {
     for (QScreen *screen : screens()) {
+        if (screen != QGuiApplication::primaryScreen()) {
+            continue;
+        }
+
         handleScreen(screen);
     }
     connect(this, &UnlockApp::screenAdded, this, &UnlockApp::handleScreen);
